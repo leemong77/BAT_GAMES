@@ -1,69 +1,26 @@
 @echo off
-setlocal enabledelayedexpansion
 chcp 65001 >nul
-title 단어박살 타이핑 게임
+setlocal enabledelayedexpansion
 
-:: 초기 설정
-set "wordfile=wordlist.txt"
-set "score=0"
-set "life=3"
+echo [타이핑게임] 단어리스트를 불러옵니다....
 
-if not exist "%wordfile%" (
-    echo [오류] %wordfile% 파일이 없습니다.
-    echo 단어장 파일을 먼저 만들어주세요.
-    pause
-    exit /b
+set "count=0"
+
+for /f "usebackq delims=" %%i in ("d:\bat\games\wordlist.txt") do (
+    set /a count +=1
+    set "word[!count!]=%%i"
 )
 
-:game_loop
-cls
-if %life% leq 0 (
-    echo ====================================
-    echo             GAME OVER!
-    echo ====================================
-    echo 최종 점수: %score%점
-    pause
-    exit /b
-)
+echo [로딩완료] 총 !count! 개의 단어를 불러왔습니다.
+echo -----------------------------------------------
 
-:: 단어장 행 수 계산
-set "total_words=0"
-for /f %%a in (%wordfile%) do set /a total_words+=1
+rem 1.난수(랜덤 숫자) 를 만들어서 방 번호 선택하기
+set /a "rand_idx=(%RANDOM% %% count)+1"
 
-:: 무작위 단어 선택
-set /a "rand_idx=(%random% %% total_words) + 1"
-set "current_word="
-set "idx=0"
-for /f "usebackq tokens=*" %%a in ("%wordfile%") do (
-    set /a idx+=1
-    if !idx! equ %rand_idx% set "current_word=%%a"
-)
+rem 2.선택된 방 번호에서 단어 꺼내오기
+set "target_word=!word[%rand_idx%]!"
 
-:: 단어 떨어지는 연출 및 입력 대기
-set "spaces="
-set /a "drop_limit=%random% %% 10 + 1"
-for /l %%i in (1,1,%drop_limit%) do set "spaces=!spaces! "
-
-echo ====================================
-echo  점수: %score%   ^|   목숨: %life%
-echo ====================================
-echo.
-echo !spaces!!current_word!
-echo.
-echo ====================================
-set /p "user_input=입력: "
-
-:: 정답 검사
-if "!user_input!"=="!current_word!" (
-    set /a score+=10
-    echo [성공] +10점!
-    timeout /t 1 >nul
-) else (
-    set /a life-=1
-    echo [실패] 오타 또는 시간 지체! (정답: !current_word!)
-    timeout /t 1 >nul
-)
-
-goto game_loop
-
-
+rem 3.화면에 문제 출제하기
+echo 오늘의 제시어는 바로...[!target_word!]입니다!
+echo -----------------------------------------------
+pause
