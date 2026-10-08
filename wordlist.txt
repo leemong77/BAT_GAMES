@@ -1,10 +1,22 @@
-apple
-banana
-computer
-windows
-script
-typing
-coffee
-matrix
-network
-system
+
+
+
+
+
+영속성 컨텍스트
+엔티티
+	PersistenceContext 
+	EntityManager 
+	Entity Lifecycle
+	Transient 
+	Managed
+	Detached
+	Removed
+	1level Cache
+	Dirty Checking
+	Write-Behind
+mapping
+	@Entity
+	@Table
+	@Id
+	GeneratedValue
